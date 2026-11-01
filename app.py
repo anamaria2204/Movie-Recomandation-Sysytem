@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from movie_recommender.crud import MovieRepository
+from movie_recommender.seed import load_sample_data
 from movie_recommender.search_sort import (
     SORTERS,
     all_decades,
@@ -20,7 +21,11 @@ st.set_page_config(page_title="Movie Recommender", page_icon="🎬", layout="wid
 def get_repo() -> MovieRepository:
     # Streamlit reruns this whole script on every click; cache_resource keeps
     # one repository object alive across reruns instead of reloading the JSON.
-    return MovieRepository(storage_file="data/movies_data.json")
+    repo = MovieRepository(storage_file="data/movies_data.json")
+    # Fresh start (e.g. first run on Streamlit Cloud): fill with sample data.
+    if not repo.movies and not repo.users:
+        load_sample_data(repo)
+    return repo
 
 
 repo = get_repo()
@@ -215,4 +220,13 @@ PAGES = {
 }
 
 st.sidebar.title("🎬 Movie Recommender")
-PAGES[st.sidebar.radio("Go to", list(PAGES))]()
+page = st.sidebar.radio("Go to", list(PAGES))
+
+st.sidebar.divider()
+if st.sidebar.button("Reset to sample data"):
+    repo.delete_all_movies()
+    repo.delete_all_users()
+    load_sample_data(repo)
+    st.rerun()
+
+PAGES[page]()
