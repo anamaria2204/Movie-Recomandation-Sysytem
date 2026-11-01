@@ -113,6 +113,12 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### Start the Streamlit app
+
+```bash
+streamlit run app.py
+```
+
 ### Run tests
 
 ```bash
