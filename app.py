@@ -220,13 +220,4 @@ PAGES = {
 }
 
 st.sidebar.title("🎬 Movie Recommender")
-page = st.sidebar.radio("Go to", list(PAGES))
-
-st.sidebar.divider()
-if st.sidebar.button("Reset to sample data"):
-    repo.delete_all_movies()
-    repo.delete_all_users()
-    load_sample_data(repo)
-    st.rerun()
-
-PAGES[page]()
+PAGES[st.sidebar.radio("Go to", list(PAGES))]()
